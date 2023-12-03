@@ -63,4 +63,53 @@ struct Day03: AdventDay {
             .filter { !symbols.intersection($0.neighbors).isEmpty }
             .reduce(0, { $0 + $1.value })
     }
+    
+    func part2() async throws -> Any {
+        var symbols: Set<Point> = []
+        var numbers: Set<Number> = []
+        var gears: Set<Point> = []
+        
+        let lines = data.split(separator: "\n")
+        
+        for (y, line) in lines.enumerated() {
+            for (x, char) in line.enumerated() {
+                if char != "." && !char.isNumber {
+                    symbols.insert(.init(x: x, y: y))
+                }
+                if char == "*" {
+                    gears.insert(.init(x: x, y: y))
+                }
+            }
+            let digits = line.enumerated().filter({ $1.isNumber })
+            
+            var value = digits[0].element.wholeNumberValue!
+            var start = digits[0].offset
+            var previousOffset = start
+            var length = 1
+            
+            for digit in digits.dropFirst() {
+                if digit.offset == previousOffset + 1 {
+                    value = value * 10 + digit.element.wholeNumberValue!
+                    previousOffset = digit.offset
+                    length += 1
+                } else {
+                    numbers.insert(.init(value: value, start: .init(x: start, y: y), length: length))
+                    value = digit.element.wholeNumberValue!
+                    start = digit.offset
+                    previousOffset = start
+                    length = 1
+                }
+            }
+            numbers.insert(.init(value: value, start: .init(x: start, y: y), length: length))
+        }
+        return gears
+            .map { gear in
+                numbers.filter { $0.neighbors.contains(gear) }
+            }
+            .filter { $0.count == 2 }
+            .map { nums in
+                nums.reduce(1, { $0 * $1.value })
+            }
+            .reduce(0, { $0 + $1 })
+    }
 }

@@ -7,7 +7,7 @@ struct Day04: AdventDay {
             var cardsNumbers: Set<Int> = []
             
             guard let range = line.range(of: ":") else {
-                return partialResult
+                fatalError()
             }
             let sets = line[range.upperBound...].split(separator: "|")
             sets.forEach { set in
@@ -21,7 +21,35 @@ struct Day04: AdventDay {
         }
     }
     
-    func score(_ numberOfCards: Int) -> Int {
+    func part2() async throws -> Any {
+        let matches = data.split(separator: "\n").map { line in
+            var winningNumbers: Set<Int> = []
+            var cardsNumbers: Set<Int> = []
+            
+            guard let range = line.range(of: ":") else {
+                fatalError()
+            }
+            let sets = line[range.upperBound...].split(separator: "|")
+            sets.forEach { set in
+                if set == sets[0] {
+                    winningNumbers = Set(set.split(separator: " ").map({ Int($0)! }))
+                } else if set == sets[1] {
+                    cardsNumbers = Set(set.split(separator: " ").map({ Int($0)! }))
+                }
+            }
+            return winningNumbers.intersection(cardsNumbers).count
+        }
+        var cards = [Int](repeating: 1, count: matches.count)
+        
+        for (index, match) in matches.enumerated() where match > 0 {
+            for i in index + 1...index + match {
+                cards[i] += cards[index]
+            }
+        }
+        return cards.reduce(0, +)
+    }
+    
+    private func score(_ numberOfCards: Int) -> Int {
         guard numberOfCards > 0 else {
             return 0
         }

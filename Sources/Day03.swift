@@ -1,9 +1,9 @@
-struct Point: Hashable {
+private struct Point: Hashable {
     let x: Int
     let y: Int
 }
 
-struct Number: Hashable {
+private struct Number: Hashable {
     let value: Int
     let start: Point
     let length: Int
@@ -25,9 +25,9 @@ struct Day03: AdventDay {
     
     var data: String
     
-    var symbols: Set<Point> = []
-    var numbers: Set<Number> = []
-    var gears: Set<Point> = []
+    private var symbols: Set<Point> = []
+    private var numbers: Set<Number> = []
+    private var gears: Set<Point> = []
     
     init(data: String) {
         self.data = data

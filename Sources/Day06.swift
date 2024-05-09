@@ -22,14 +22,52 @@ struct Day06: AdventDay {
     
     func part1() async throws -> Any {
         races.reduce(1) { partialResult, race in
-            var records = 0
-            for time in 1..<race.time {
-                if race.maxDistance(for: time) > race.distance {
-                    records += 1
+            var min: Int?
+            var max: Int?
+            var left = 0
+            var right = race.time - 1
+            while left < right {
+                guard min == nil || max == nil else {
+                    break
                 }
+                if min == nil && race.maxDistance(for: left) > race.distance {
+                    min = left
+                }
+                if max == nil && race.maxDistance(for: right) > race.distance {
+                    max = right
+                }
+                left += 1
+                right -= 1
             }
-            records = records == 0 ? 1 : records
-            return partialResult * records
+            return partialResult * (max! - min! + 1)
         }
+    }
+    
+    func part2() async throws -> Any {
+        let race = Race(time: 44707080, distance: 283113411341491)
+        var min: Int?
+        var max: Int?
+        var left = 0
+        var right = race.time - 1
+        while left < right {
+            guard min == nil || max == nil else {
+                break
+            }
+            if min == nil && race.maxDistance(for: left) > race.distance {
+                min = left
+            }
+            if max == nil && race.maxDistance(for: right) > race.distance {
+                max = right
+            }
+            left += 1
+            right -= 1
+        }
+        return max! - min! + 1
+    }
+}
+
+private extension String {
+    func removingWhitespaces() -> String {
+        return components(separatedBy: .whitespaces).joined()
     }
 }
